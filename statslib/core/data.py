@@ -24,3 +24,17 @@ class Dataset:
     @property
     def shape(self):
         return self._data.shape
+    
+    def __getitem__(self, key):
+        # Allow indexing by column name(s)
+        if isinstance(key, str):
+            # single column name
+            idx = self.columns.index(key)
+            return self._data[:, idx]
+        elif isinstance(key, list) and all(isinstance(k, str) for k in key):
+            # list of column names
+            idx = [self.columns.index(k) for k in key]
+            return self._data[:, idx]
+        else:
+            # fallback to numpy indexing (slice, integer, etc.)
+            return self._data[key]
